@@ -1,0 +1,32 @@
+{
+  "name": "@game3js/typing-racer-server",
+  "version": "1.0.0",
+  "description": "npm init template for bootstraping an empty Colyseus project",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "loadtest": "colyseus-loadtest loadtest/example.js --room my_room --numClients 2",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/colyseus/create-colyseus/issues"
+  },
+  "homepage": "https://github.com/colyseus/create-colyseus#readme",
+  "devDependencies": {
+    "@colyseus/loadtest": "^0.13.1"
+  },
+  "dependencies": {
+    "@colyseus/monitor": "^0.12.2",
+    "@colyseus/social": "^0.10.9",
+    "colyseus": "^0.13.0",
+    "cors": "^2.8.5",
+    "ethereumjs-util": "^7.0.4",
+    "ethjs-query": "^0.3.8",
+    "express": "^4.16.4",
+    "express-jwt": "^5.3.1",
+    "txtgen": "^2.2.7",
+    "web3-provider-engine": "^15.0.12"
+  }
+}
