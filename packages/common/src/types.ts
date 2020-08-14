@@ -1,10 +1,18 @@
-export type ActionType = 'move' | 'rotate' | 'name' | 'shoot';
-export type GameState = 'waiting' | 'lobby' | 'game';
-export type GameMode = 'score attack' | 'deathmatch' | 'team deathmatch';
-export type Teams = 'Red' | 'Blue';
-export type MessageType = 'waiting' | 'start' | 'stop' | 'joined' | 'killed' | 'won' | 'left' | 'timeout';
-export type PropType = 'potion-red';
-export type WallCollisionType = 'full' | 'none';
+export type ActionType = "move" | "rotate" | "name" | "shoot";
+export type GameState = "waiting" | "lobby" | "game";
+export type GameMode = "score attack" | "deathmatch" | "team deathmatch";
+export type Teams = "Red" | "Blue";
+export type MessageType =
+  | "waiting"
+  | "start"
+  | "stop"
+  | "joined"
+  | "killed"
+  | "won"
+  | "left"
+  | "timeout";
+export type PropType = "potion-red";
+export type WallCollisionType = "full" | "none";
 
 /**
  * Represent the initial parameters of a Player

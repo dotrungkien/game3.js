@@ -6,6 +6,7 @@
   "typings": "build/index.d.ts",
   "dependencies": {
     "@openzeppelin/contracts": "^3.0.1",
+    "@colyseus/schema": "^0.5.17",
     "colyseus": "^0.13.7",
     "highlight.js": "^10.0.3",
     "ipfs": "^0.44.0",
