@@ -38,8 +38,9 @@ const Game = () => {
   const [hasName, setHasName] = useState(!!myName);
   useEffect(() => {
     let localName = localStorage.getItem("myName");
-    console.log({ localName });
+
     if (!!localName) {
+      console.log(`Welcome back ${localName}`);
       setMyName(localName);
     }
   }, []);
@@ -119,20 +120,17 @@ const Game = () => {
       console.error("invalid name");
       return;
     }
-    console.log("saveName");
     localStorage.setItem("myName", myName);
     setHasName(true);
   };
 
   const handleInput = (e) => {
-    console.log("handle Input");
     e.preventDefault();
     setMyName(e.target.value);
   };
 
   const claimReward = () => {
     const { account, room } = state;
-    // console.log('sent claim for ', account);
     room.send("claimReward", account);
     toast.success("Claim transaction sent!");
     setModal(false);
@@ -141,32 +139,32 @@ const Game = () => {
   return (
     <div>
       <ToastContainer />
-      {/* {hasName ? ( */}
-      <GameSketch dispatch={dispatch} sketch={sketch} state={state} />
-      {/* ) : ( */}
-      <MDBContainer>
-        <MDBModal isOpen={!hasName} toggle={() => {}}>
-          <MDBModalHeader>Choose your name</MDBModalHeader>
-          <MDBModalBody>
-            <form>
-              <MDBInput
-                icon="user"
-                type="text"
-                onInput={(e) => handleInput(e)}
-                value={myName}
-                label="Your name here"
-                outline
-              />
-            </form>
-          </MDBModalBody>
-          <MDBModalFooter>
-            <MDBBtn color="primary" onClick={() => saveName()}>
-              Save
-            </MDBBtn>
-          </MDBModalFooter>
-        </MDBModal>
-      </MDBContainer>
-      {/* )} */}
+      {hasName ? (
+        <GameSketch dispatch={dispatch} sketch={sketch} state={state} />
+      ) : (
+        <MDBContainer>
+          <MDBModal isOpen={!hasName} toggle={() => {}}>
+            <MDBModalHeader>Choose your name</MDBModalHeader>
+            <MDBModalBody>
+              <form>
+                <MDBInput
+                  icon="user"
+                  type="text"
+                  onInput={(e) => handleInput(e)}
+                  value={myName}
+                  label="Your name here"
+                  outline
+                />
+              </form>
+            </MDBModalBody>
+            <MDBModalFooter>
+              <MDBBtn color="primary" onClick={() => saveName()}>
+                Save
+              </MDBBtn>
+            </MDBModalFooter>
+          </MDBModal>
+        </MDBContainer>
+      )}
       <MDBContainer>
         <MDBModal isOpen={modal} toggle={() => setModal(false)}>
           <MDBModalHeader>Congratulation!</MDBModalHeader>

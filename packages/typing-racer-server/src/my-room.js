@@ -1,20 +1,20 @@
-const colyseus = require('colyseus');
-const GameEngine = require('./GameEngine');
+const colyseus = require("colyseus");
+const GameEngine = require("./game-engine");
 const gameEngine = new GameEngine();
-const rpcWrapperEngine = require('./rpc-wrapper-engine.js');
-const EthQuery = require('ethjs-query');
-const ethUtil = require('ethereumjs-util');
-const config = require('./get-config');
+const rpcWrapperEngine = require("./rpc-wrapper-engine.js");
+const EthQuery = require("ethjs-query");
+const ethUtil = require("ethereumjs-util");
+const config = require("./get-config");
 
 exports.MyRoom = class extends colyseus.Room {
   onCreate(options) {
-    console.log('====CREATE===', options);
+    console.log("====CREATE===", options);
     setInterval(() => updateGame(this), 160);
 
     function updateGame(room) {
       gameEngine.updatePlayers();
-      room.broadcast('heartbeat', { players: gameEngine.players });
-      room.broadcast('sentence', { sentence: gameEngine.sentence });
+      room.broadcast("heartbeat", { players: gameEngine.players });
+      room.broadcast("sentence", { sentence: gameEngine.sentence });
       // if (gameEngine.winner && !gameEngine.endGameCountdown) {
       //   // emit event to show everyone that the game is finished
       //   room.broadcast('winner', { clientId: gameEngine.winner.id });
@@ -22,7 +22,7 @@ exports.MyRoom = class extends colyseus.Room {
       // }
       if (gameEngine.winner) {
         // emit event to show everyone that the game is finished
-        room.broadcast('winner', { clientId: gameEngine.winner.id });
+        room.broadcast("winner", { clientId: gameEngine.winner.id });
         // setTimeout(() => restartGame(room), 1000);
         restartGame(room);
       }
@@ -30,7 +30,7 @@ exports.MyRoom = class extends colyseus.Room {
 
     function restartGame(room) {
       // emit event to reset players
-      room.broadcast('restart');
+      room.broadcast("restart");
       gameEngine.restart();
     }
   }
@@ -39,27 +39,27 @@ exports.MyRoom = class extends colyseus.Room {
     console.log(`${client.id} joined`);
     gameEngine.createNewPlayer(client.id);
 
-    this.onMessage('keyPressed', (client, key) => {
+    this.onMessage("keyPressed", (client, key) => {
       if (!gameEngine.correctKeyPressed(key, client.id)) {
         if (!isModifierKey(key)) {
-          client.send('wrongLetter', { type: 'wrongLetter' });
+          client.send("wrongLetter", { type: "wrongLetter" });
         }
       }
 
       function isModifierKey(key) {
-        return key === 'Shift' || key === 'Control' || key === 'Alt';
+        return key === "Shift" || key === "Control" || key === "Alt";
       }
     });
 
-    this.onMessage('claimReward', (client, address) => {
-      console.log('received claim reward', address);
+    this.onMessage("claimReward", (client, address) => {
+      console.log("received claim reward", address);
       claimToWallet(address).then(({ tx, address }) => {
-        console.log('claim reward succesuflly, tx hash: ', tx);
-        client.send('claimSuccess', { clientId: client.id, tx, address });
+        console.log("claim reward succesuflly, tx hash: ", tx);
+        client.send("claimSuccess", { clientId: client.id, tx, address });
       });
     });
 
-    const claimToWallet = async address => {
+    const claimToWallet = async (address) => {
       const ether = 1e18;
       const amountWei = 0.01 * ether;
       const engine = rpcWrapperEngine({
@@ -73,7 +73,7 @@ exports.MyRoom = class extends colyseus.Room {
           to: address,
           from: config.address,
           value: amountWei,
-          data: '',
+          data: "",
         });
 
         return { tx, address };
@@ -87,7 +87,7 @@ exports.MyRoom = class extends colyseus.Room {
   onLeave(client, consented) {
     console.log(`${client.id} left`);
     gameEngine.removePlayer(client.id);
-    this.broadcast('disconnect', { clientId: client.id });
+    this.broadcast("disconnect", { clientId: client.id });
   }
 
   onDispose() {}
