@@ -42,7 +42,7 @@ export default function (s) {
 
     s.textSize(14);
     s.fill(61, 53, 21);
-    s.text('x', window.innerWidth - 243, s.y - 16);
+    s.text("x", window.innerWidth - 243, s.y - 16);
 
     // Bottom of console
     s.fill(45, 9, 34, 150);
@@ -51,25 +51,31 @@ export default function (s) {
   };
 
   s.displayPath = () => {
-    let path = '/home/user';
+    let path = localStorage.getItem("myName") + "";
 
     s.textSize(window.innerWidth / 80);
     s.fill(100, 255, 100);
     s.text(path, 220, s.y + 50);
 
     s.fill(180, 180, 180);
-    s.text(':~$ ', 220 + s.textWidth(path), s.y + 50);
+    s.text(":~$ ", 220 + s.textWidth(path), s.y + 50);
     s.textSize(window.innerWidth / 68);
   };
 
   s.drawSentence = () => {
-    let pathFull = '/home/user:~$ ';
+    let pathFull = localStorage.getItem("myName") + ":~$ ";
     const currentIndex = s.state.currentIndex;
     const sentence = s.state.sentence;
     const wrongLetter = s.state.wrongLetter;
     if (sentence) {
       s.fill(255, 255, 255);
-      s.text(sentence, 200 + s.textWidth(pathFull), s.y + 35, MAX_WIDTH, MAX_HEIGHT);
+      s.text(
+        sentence,
+        200 + s.textWidth(pathFull),
+        s.y + 35,
+        MAX_WIDTH,
+        MAX_HEIGHT
+      );
 
       if (wrongLetter && currentIndex + 1 < sentence.length - 1) {
         s.fill(255, 100, 100);
@@ -93,13 +99,15 @@ export default function (s) {
   };
 
   s.drawCursor = () => {
-    let pathFull = '/home/user:~$ ';
+    let pathFull = localStorage.getItem("myName") + ":~$ ";
     const currentIndex = s.state.currentIndex;
     const sentence = s.state.sentence;
     if (sentence) {
       // if (Math.floor(s.frameCount / 60) % 2 === 0) {
       const currentCharWidth = s.textWidth(sentence.charAt(currentIndex));
-      const currentSentenceWidth = s.textWidth(sentence.substring(0, currentIndex));
+      const currentSentenceWidth = s.textWidth(
+        sentence.substring(0, currentIndex)
+      );
 
       const cursorX =
         200 +

@@ -1,6 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
 import * as Colyseus from "colyseus.js";
-
 import { generate } from "shortid";
 
 import sketch from "./sketch";
@@ -28,6 +27,26 @@ const Game = () => {
   let state = useContext(AppStateContext);
   let dispatch = useContext(AppDispatchContext);
   let client = new Colyseus.Client("ws://localhost:2567");
+
+  /**
+   * Save user name
+   */
+  const [modal, setModal] = useState(false);
+  const [myName, setMyName] = useState(
+    localStorage.getItem("myName") ? localStorage.getItem("myName") : ""
+  );
+  const [hasName, setHasName] = useState(!!myName);
+  useEffect(() => {
+    let localName = localStorage.getItem("myName");
+    console.log({ localName });
+    if (!!localName) {
+      setMyName(localName);
+    }
+  }, []);
+
+  /**
+   * Colyseus Networking
+   */
 
   let room;
 
@@ -92,18 +111,8 @@ const Game = () => {
 
   useEffect(() => {
     start();
-    let localName = localStorage.getItem("myName");
-    console.log({ localName });
-    if (!!localName) {
-      setMyName(localName);
-    }
-
     return stop();
   }, []);
-
-  const [modal, setModal] = useState(false);
-  const [hasName, setHasName] = useState(false);
-  const [myName, setMyName] = useState("");
 
   const saveName = () => {
     if (!myName) {
@@ -114,6 +123,7 @@ const Game = () => {
     localStorage.setItem("myName", myName);
     setHasName(true);
   };
+
   const handleInput = (e) => {
     console.log("handle Input");
     e.preventDefault();
@@ -131,6 +141,9 @@ const Game = () => {
   return (
     <div>
       <ToastContainer />
+      {/* {hasName ? ( */}
+      <GameSketch dispatch={dispatch} sketch={sketch} state={state} />
+      {/* ) : ( */}
       <MDBContainer>
         <MDBModal isOpen={!hasName} toggle={() => {}}>
           <MDBModalHeader>Choose your name</MDBModalHeader>
@@ -153,7 +166,7 @@ const Game = () => {
           </MDBModalFooter>
         </MDBModal>
       </MDBContainer>
-
+      {/* )} */}
       <MDBContainer>
         <MDBModal isOpen={modal} toggle={() => setModal(false)}>
           <MDBModalHeader>Congratulation!</MDBModalHeader>
@@ -168,7 +181,7 @@ const Game = () => {
 
               <MDBCol md="9">
                 <p>
-                  <strong>You just won 0.1 ETH from Typing Racer.</strong>
+                  <strong>You just won 0.01 ETH from Typing Racer.</strong>
                 </p>
               </MDBCol>
             </MDBRow>
@@ -184,7 +197,6 @@ const Game = () => {
           </MDBModalFooter>
         </MDBModal>
       </MDBContainer>
-      <GameSketch dispatch={dispatch} sketch={sketch} state={state} />
     </div>
   );
 };

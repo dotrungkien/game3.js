@@ -51,15 +51,15 @@ const Nav = () => {
         console.log("Could not get a wallet connection", e);
         return;
       }
-      provider.on("accountsChanged", (accounts) => {
-        fetchAccountData(provider);
-      });
-      provider.on("chainChanged", (chainId) => {
-        fetchAccountData(provider);
-      });
-      provider.on("networkChanged", (networkId) => {
-        fetchAccountData(provider);
-      });
+      // provider.on("accountsChanged", (accounts) => {
+      //   fetchAccountData(provider);
+      // });
+      // provider.on("chainChanged", (chainId) => {
+      //   fetchAccountData(provider);
+      // });
+      // provider.on("networkChanged", (networkId) => {
+      //   fetchAccountData(provider);
+      // });
       await fetchAccountData(provider);
     };
 

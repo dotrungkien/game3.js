@@ -1,7 +1,7 @@
-import React, { memo, useEffect, useRef } from 'react';
-import PropTypes from 'prop-types';
-import p5 from 'p5';
-import { generate } from 'shortid';
+import React, { memo, useEffect, useRef } from "react";
+import PropTypes from "prop-types";
+import p5 from "p5";
+import { generate } from "shortid";
 
 export default function (id = generate()) {
   let canvas = null;
