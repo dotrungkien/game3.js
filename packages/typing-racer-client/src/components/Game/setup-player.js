@@ -11,27 +11,10 @@ export default function (s) {
      * x: 400
      * y: 200
      */
-    // console.log(player.x, player.startX, player.y);
-    // s.x = player.x;
-    // s.player.startX = s.x - 200;
-    // s.player.startY = player.y;
-
-    // s.y = player.y;
-    // s.id = player.id;
-    // s.rgb = player.rgb;
-    // s.sentence = player.sentence;
-    // s.img = s.createImg(player.profileImg);
-    // s.img.hide();
-
-    player.actualXPosition = 0;
-
-    // s.finished = false;
-    // s.winner = false;
 
     s.fill(player.rgb.r, player.rgb.g, player.rgb.b);
     s.drawLines(player);
-    s.circle(player.x, player.y, window.innerWidth / 96);
-
+    s.circle(player.x, player.y, window.innerWidth / 64);
     s.drawCurrentSpeed(player);
   };
 
@@ -75,12 +58,12 @@ export default function (s) {
   s.doMerge = (player) => {
     s.drawLineToWinnerPosition(player);
     if (player.x < player.actualXPosition - 2) {
-      player.x = s.lerp(player.x, player.actualXPosition, 0.05);
+      player.x = s.lerp(player.x, player.actualXPosition, 0.1);
     } else {
       player.hasReachedEnd = true;
       s.drawLineFromEndPositionToPlayer(player);
-      player.x = s.lerp(player.x, s.windowWidth - 100, 0.05);
-      player.y = s.lerp(player.y, 50, 0.05);
+      player.x = s.lerp(player.x, s.windowWidth - 100, 0.1);
+      player.y = s.lerp(player.y, 50, 0.1);
     }
   };
 

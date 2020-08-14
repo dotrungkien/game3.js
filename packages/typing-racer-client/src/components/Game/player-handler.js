@@ -6,7 +6,8 @@ export function updatePlayers(state, dispatch, serverPlayers) {
 
     const existingPlayer = playerExists(players, playerFromServer);
     if (!existingPlayer) {
-      const playersYPosition = playerYPositionDelta + playerYPositionDelta * (players.length + 1);
+      const playersYPosition =
+        playerYPositionDelta + playerYPositionDelta * (players.length + 1);
       playerFromServer.y = playersYPosition;
       playerFromServer.startY = playersYPosition;
       players.push(playerFromServer);
@@ -16,7 +17,7 @@ export function updatePlayers(state, dispatch, serverPlayers) {
       existingPlayer.winner = playerFromServer.winner;
       existingPlayer.currentSpeed = playerFromServer.currentSpeed;
     }
-    dispatch({ type: 'UPDATE_PLAYERS', payload: players });
+    dispatch({ type: "UPDATE_PLAYERS", payload: players });
   }
 }
 
@@ -31,19 +32,20 @@ const playerExists = (players, playerFromServer) => {
 
 export function removePlayer(state, dispatch, playerId) {
   let { playerYPositionDelta, playerInitialYPosition, players } = state;
-  players = players.filter(player => player.id !== playerId);
+  players = players.filter((player) => player.id !== playerId);
   players.forEach((player, idx) => {
     player.y = playerInitialYPosition + playerYPositionDelta * idx;
     player.startY = playerInitialYPosition + playerYPositionDelta * idx;
   });
-  dispatch({ type: 'UPDATE_PLAYERS', payload: players });
+  dispatch({ type: "UPDATE_PLAYERS", payload: players });
 }
 
 export function resetPlayers(state, dispatch) {
+  console.log("resetPlayer");
   const { players } = state;
   for (let i = 0; i < players.length; i++) {
     players[i].x = players[i].startX + 200;
     players[i].y = players[i].startY;
   }
-  dispatch({ type: 'UPDATE_PLAYERS', payload: players });
+  dispatch({ type: "UPDATE_PLAYERS", payload: players });
 }

@@ -2,7 +2,6 @@ import setupMasterBranch from "./setup-master-branch";
 import setupTerminal from "./setup-terminal";
 import setupCountdown from "./setup-countdown";
 import setupPlayer from "./setup-player";
-// import Player from './setup-player';
 
 export default function (s) {
   s.state = {};
@@ -42,21 +41,16 @@ export default function (s) {
   };
 
   s.drawPlayers = () => {
-    const { currentIndex, players, clientId } = s.state;
+    const { players, clientId } = s.state;
 
     players.forEach((playerInfo) => {
-      // console.log(playerInfo);
       if (playerInfo.id === clientId) {
-        if (playerInfo.currentIndex !== currentIndex) {
-          s.dispatch({
-            type: "UPDATE_CURRENT_INDEX",
-            payload: playerInfo.currentIndex,
-          });
-        }
+        s.dispatch({
+          type: "UPDATE_CURRENT_INDEX",
+          payload: playerInfo.currentIndex,
+        });
       }
       s.drawPlayer(playerInfo);
-      // const newPlayer = new Player(playerInfo, s);
-      // newPlayer.draw();
     });
   };
 }

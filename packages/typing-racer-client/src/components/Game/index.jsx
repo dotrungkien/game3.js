@@ -36,14 +36,15 @@ const Game = () => {
     localStorage.getItem("myName") ? localStorage.getItem("myName") : ""
   );
   const [hasName, setHasName] = useState(!!myName);
+
   useEffect(() => {
     let localName = localStorage.getItem("myName");
-
     if (!!localName) {
       console.log(`Welcome back ${localName}`);
       setMyName(localName);
+      toast.info(`Welcome ${myName}`);
     }
-  }, []);
+  }, [myName]);
 
   /**
    * Colyseus Networking
@@ -51,69 +52,67 @@ const Game = () => {
 
   let room;
 
-  const start = async () => {
-    room = await client.joinOrCreate("typing-room");
-    console.log(room.sessionId, "joined", room.name);
-    dispatch({ type: "UPDATE_ROOM", payload: room });
-    dispatch({ type: "UPDATE_CLIENT_ID", payload: room.sessionId });
+  useEffect(() => {
+    const start = async () => {
+      room = await client.joinOrCreate("typing-room");
+      console.log(room.sessionId, "joined", room.name);
+      dispatch({ type: "UPDATE_ROOM", payload: room });
+      dispatch({ type: "UPDATE_CLIENT_ID", payload: room.sessionId });
 
-    window.keyPressed = function (e) {
-      e.preventDefault();
-      room.send("keyPressed", e.key);
+      window.keyPressed = function (e) {
+        e.preventDefault();
+        room.send("keyPressed", e.key);
+      };
+
+      room.onMessage("sentence", ({ sentence }) => {
+        if (sentence !== state.sentence) {
+          // console.log('change sentence', state.sentence, sentence);
+          dispatch({ type: "UPDATE_SENTENCE", payload: sentence });
+        }
+      });
+
+      room.onMessage("heartbeat", ({ players }) => {
+        // if (players.length) console.log(players[0]);
+        updatePlayers(state, dispatch, players);
+      });
+
+      room.onMessage("wrongLetter", (message) => {
+        // console.log("on wrong letter message ", message);
+        dispatch({ type: "WRONG_LETTER", payload: true });
+      });
+
+      room.onMessage("disconnect", ({ clientId }) => {
+        console.log(`Disconnect ${clientId}`);
+        removePlayer(state, dispatch, clientId);
+      });
+
+      room.onMessage("winner", ({ clientId }) => {
+        if (room.sessionId === clientId) {
+          console.log(`Congratulation ${myName}`);
+          setModal(true);
+        }
+      });
+
+      room.onMessage("restart", () => {
+        console.log("restarting game-------------");
+        resetPlayers(state, dispatch);
+      });
+
+      room.onMessage("claimSuccess", ({ clientId, tx, address }) => {
+        if (room.sessionId === clientId) {
+          console.log(`claim reward successfully for ${address} tx = ${tx}`);
+          toast.success(`Transaction Hash = ${tx}`, "Transaction Completed");
+        }
+      });
     };
 
-    room.onMessage("sentence", ({ sentence }) => {
-      if (sentence !== state.sentence) {
-        // console.log('change sentence', state.sentence, sentence);
-        dispatch({ type: "UPDATE_SENTENCE", payload: sentence });
-      }
-    });
-
-    room.onMessage("heartbeat", ({ players }) => {
-      // if (players.length) console.log(players[0]);
-      updatePlayers(state, dispatch, players);
-    });
-
-    room.onMessage("wrongLetter", (message) => {
-      // console.log('on wrong letter message ', message);
-      // dispatch({ type: 'WRONG_LETTER', payload: true });
-    });
-
-    room.onMessage("disconnect", ({ clientId }) => {
-      console.log(`Disconnect ${clientId}`);
-      removePlayer(state, dispatch, clientId);
-    });
-
-    room.onMessage("winner", ({ clientId }) => {
-      console.log("winner found", clientId, room.sessionId);
-      if (room.sessionId === clientId) {
-        setModal(true);
-      }
-    });
-
-    room.onMessage("restart", () => {
-      console.log("restarting game-------------");
-      resetPlayers(state, dispatch);
-      // countDown.beginGameStarting();
-    });
-
-    room.onMessage("claimSuccess", ({ clientId, tx, address }) => {
-      if (room.sessionId === clientId) {
-        console.log(`claim reward successfully for ${address} tx = ${tx}`);
-        toast.success(`Transaction Hash = ${tx}`, "Transaction Completed");
-      }
-    });
-  };
-
-  const stop = () => {
-    console.log("leaving room");
-    if (room) room.leave();
-  };
-
-  useEffect(() => {
+    const stop = () => {
+      console.log("leaving room");
+      if (room) room.leave();
+    };
     start();
     return stop();
-  }, []);
+  }, [room]);
 
   const saveName = () => {
     if (!myName) {
@@ -122,6 +121,7 @@ const Game = () => {
     }
     localStorage.setItem("myName", myName);
     setHasName(true);
+    toast.info(`Welcome ${myName}`);
   };
 
   const handleInput = (e) => {

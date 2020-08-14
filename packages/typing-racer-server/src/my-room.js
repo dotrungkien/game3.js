@@ -8,28 +8,21 @@ const config = require("./get-config");
 
 exports.MyRoom = class extends colyseus.Room {
   onCreate(options) {
-    console.log("====CREATE===", options);
-    setInterval(() => updateGame(this), 160);
+    console.log("====CREATE===");
+    setInterval(() => updateGame(this), 100);
 
     function updateGame(room) {
       gameEngine.updatePlayers();
       room.broadcast("heartbeat", { players: gameEngine.players });
       room.broadcast("sentence", { sentence: gameEngine.sentence });
-      // if (gameEngine.winner && !gameEngine.endGameCountdown) {
-      //   // emit event to show everyone that the game is finished
-      //   room.broadcast('winner', { clientId: gameEngine.winner.id });
-      //   gameEngine.endGameCountdown = setTimeout(() => restartGame(room), 5000);
-      // }
-      if (gameEngine.winner) {
+      if (gameEngine.winner && !gameEngine.endGameCountdown) {
         // emit event to show everyone that the game is finished
         room.broadcast("winner", { clientId: gameEngine.winner.id });
-        // setTimeout(() => restartGame(room), 1000);
-        restartGame(room);
+        gameEngine.endGameCountdown = setTimeout(() => restartGame(room), 5000);
       }
     }
 
     function restartGame(room) {
-      // emit event to reset players
       room.broadcast("restart");
       gameEngine.restart();
     }

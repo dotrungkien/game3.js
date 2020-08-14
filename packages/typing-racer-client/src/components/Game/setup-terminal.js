@@ -67,7 +67,9 @@ export default function (s) {
     const currentIndex = s.state.currentIndex;
     const sentence = s.state.sentence;
     const wrongLetter = s.state.wrongLetter;
+
     if (sentence) {
+      // first fill sentence white color
       s.fill(255, 255, 255);
       s.text(
         sentence,
@@ -77,7 +79,8 @@ export default function (s) {
         MAX_HEIGHT
       );
 
-      if (wrongLetter && currentIndex + 1 < sentence.length - 1) {
+      // fill red wrong letter
+      if (wrongLetter && currentIndex < sentence.length) {
         s.fill(255, 100, 100);
         s.text(
           sentence.substring(0, currentIndex + 1),
@@ -86,15 +89,27 @@ export default function (s) {
           MAX_WIDTH,
           MAX_HEIGHT
         );
+
+        // then fill green correct part (until currentIndex)
+        s.fill(100, 255, 100);
+        s.text(
+          sentence.substring(0, currentIndex),
+          200 + s.textWidth(pathFull),
+          s.y + 35,
+          MAX_WIDTH,
+          MAX_HEIGHT
+        );
+      } else {
+        // then fill green correct part (until currentIndex)
+        s.fill(100, 255, 100);
+        s.text(
+          sentence.substring(0, currentIndex),
+          200 + s.textWidth(pathFull),
+          s.y + 35,
+          MAX_WIDTH,
+          MAX_HEIGHT
+        );
       }
-      s.fill(100, 255, 100);
-      s.text(
-        sentence.substring(0, currentIndex),
-        200 + s.textWidth(pathFull),
-        s.y + 35,
-        MAX_WIDTH,
-        MAX_HEIGHT
-      );
     }
   };
 
