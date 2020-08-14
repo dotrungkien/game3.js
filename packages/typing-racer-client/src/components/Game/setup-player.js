@@ -11,7 +11,7 @@ export default function (s) {
      * x: 400
      * y: 200
      */
-
+    // console.log(player.x, player.y);
     s.fill(player.rgb.r, player.rgb.g, player.rgb.b);
     s.drawLines(player);
     s.circle(player.x, player.y, window.innerWidth / 64);

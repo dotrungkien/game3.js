@@ -41,11 +41,11 @@ export function removePlayer(state, dispatch, playerId) {
 }
 
 export function resetPlayers(state, dispatch) {
-  console.log("resetPlayer");
   const { players } = state;
   for (let i = 0; i < players.length; i++) {
     players[i].x = players[i].startX + 200;
     players[i].y = players[i].startY;
+    players[i].winner = false;
   }
   dispatch({ type: "UPDATE_PLAYERS", payload: players });
 }

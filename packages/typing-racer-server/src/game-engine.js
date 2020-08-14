@@ -62,6 +62,7 @@ class GameEngine {
     this.sentence = txtgen.sentence();
     for (let i = 0; i < this.players.length; i++) {
       this.players[i].reset(this.sentence);
+      console.log(this.players[i].x, this.players[i].y);
     }
     delete this.winner;
     delete this.endGameCountdown;
