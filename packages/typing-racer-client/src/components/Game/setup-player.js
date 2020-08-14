@@ -1,115 +1,108 @@
-export default class Player {
-  constructor(player, s) {
-    console.log('player');
-    this.s = s;
-    this.x = player.x;
+export default function (s) {
+  s.drawPlayer = (player) => {
+    /**
+     * currentIndex: 0
+     * currentSpeed: 0
+     * id: "0JOzBD3mHVV-cEljAAAA"
+     * profileImg: "https://i.pravatar.cc/150?u=0JOzBD3mHVV-cEljAAAA"
+     * rgb: {r: 209.45350329797697, g: 11.190657642410821, b: 251.01979684619542}
+     * sentence: "The melon is a bear."
+     * startTime: 1597247836648
+     * x: 400
+     * y: 200
+     */
+    // console.log(player.x, player.startX, player.y);
+    // s.x = player.x;
+    // s.player.startX = s.x - 200;
+    // s.player.startY = player.y;
 
-    this.startX = this.x - 200;
-    this.startY = player.y;
+    // s.y = player.y;
+    // s.id = player.id;
+    // s.rgb = player.rgb;
+    // s.sentence = player.sentence;
+    // s.img = s.createImg(player.profileImg);
+    // s.img.hide();
 
-    this.y = player.y;
-    this.id = player.id;
-    this.rgb = player.rgb;
-    this.sentence = player.sentence;
+    player.actualXPosition = 0;
 
-    this.currentIndex = 0;
-    this.currentIndex = player.currentIndex;
-    this.actualXPosition = 0;
-    this.currentSpeed = player.currentSpeed || 0;
+    // s.finished = false;
+    // s.winner = false;
 
-    this.finished = false;
-    this.winner = false;
-  }
+    s.fill(player.rgb.r, player.rgb.g, player.rgb.b);
+    s.drawLines(player);
+    s.circle(player.x, player.y, window.innerWidth / 96);
 
-  draw() {
-    console.log('player draw');
-    this.s.fill(this.rgb.r, this.rgb.g, this.rgb.b);
-    this.drawLines();
-    this.s.circle(this.x, this.y, window.innerWidth / 96);
+    s.drawCurrentSpeed(player);
+  };
 
-    this.drawCurrentSpeed();
-    // this.drawGithubImage();
-  }
-
-  // drawGithubImage() {
-  //   imageMode(CENTER);
-  //   image(this.img, this.x, this.y, 80, 80);
-  // }
-
-  drawLines() {
-    this.s.push();
-    this.setupLineStroke();
-    if (this.winner) {
-      this.doMerge();
+  s.drawLines = (player) => {
+    s.push();
+    s.setupLineStroke(player.rgb);
+    if (player.winner) {
+      s.doMerge(player);
     } else {
-      this.calculateXPosition();
-      this.drawLineToPlayerPosition();
+      s.calculateXPosition(player);
+      s.drawLineToPlayerPosition(player);
     }
-    this.drawLineToMasterBranch();
-    this.s.pop();
-  }
+    s.drawLineToMasterBranch(player);
+    s.pop();
+  };
 
-  calculateXPosition() {
-    this.actualXPosition = this.s.map(
-      this.currentIndex,
-      // this.s.state.currentIndex,
+  s.calculateXPosition = (player) => {
+    player.actualXPosition = s.map(
+      player.currentIndex,
       0,
-      this.sentence.length,
+      player.sentence.length,
       400,
-      this.s.windowWidth - 200
+      s.windowWidth - 200
     );
-    // console.log(
-    //   this.currentIndex,
-    //   this.s.state.currentIndex,
-    //   this.sentence.length,
-    //   this.s.windowWidth
-    // );
-    this.x = this.s.lerp(this.x, this.actualXPosition, 0.01);
-    // console.log(this.x);
-  }
+    player.x = s.lerp(player.x, player.actualXPosition, 0.01);
+  };
 
-  setupLineStroke() {
-    this.s.strokeWeight(5);
-    this.s.stroke(this.rgb.r, this.rgb.g, this.rgb.b);
-  }
+  s.setupLineStroke = (rgb) => {
+    s.strokeWeight(5);
+    s.stroke(rgb.r, rgb.g, rgb.b);
+  };
 
-  drawLineToPlayerPosition() {
-    this.s.line(this.startX, this.y, this.x, this.y);
-  }
+  s.drawLineToPlayerPosition = (player) => {
+    s.line(player.startX, player.y, player.x, player.y);
+  };
 
-  drawLineToMasterBranch() {
-    this.s.line(this.startX, this.startY, 100, 50);
-  }
+  s.drawLineToMasterBranch = (player) => {
+    s.line(player.startX, player.startY, 100, 50);
+  };
 
-  doMerge() {
-    this.drawLineToWinnerPosition();
-    if (this.x < this.actualXPosition - 2) {
-      this.x = this.s.lerp(this.x, this.actualXPosition, 0.05);
+  s.doMerge = (player) => {
+    s.drawLineToWinnerPosition(player);
+    if (player.x < player.actualXPosition - 2) {
+      player.x = s.lerp(player.x, player.actualXPosition, 0.05);
     } else {
-      this.hasReachedEnd = true;
-      this.drawLineFromEndPositionToPlayer();
-      this.x = this.s.lerp(this.x, this.s.windowWidth - 100, 0.05);
-      this.y = this.s.lerp(this.y, 50, 0.05);
+      player.hasReachedEnd = true;
+      s.drawLineFromEndPositionToPlayer(player);
+      player.x = s.lerp(player.x, s.windowWidth - 100, 0.05);
+      player.y = s.lerp(player.y, 50, 0.05);
     }
-  }
+  };
 
-  drawLineToWinnerPosition() {
-    if (this.hasReachedEnd) {
-      this.s.line(this.startX, this.startY, this.s.windowWidth - 200, this.startY);
+  s.drawLineToWinnerPosition = (player) => {
+    if (player.hasReachedEnd) {
+      s.line(player.startX, player.startY, s.windowWidth - 200, player.startY);
     } else {
-      this.s.line(this.startX, this.startY, this.x, this.startY);
+      s.line(player.startX, player.startY, player.x, player.startY);
     }
-  }
+  };
 
-  drawLineFromEndPositionToPlayer() {
-    this.s.push();
-    this.setupLineStroke();
-    this.s.line(this.s.windowWidth - 200, this.startY, this.x, this.y);
-    this.s.pop();
-  }
+  s.drawLineFromEndPositionToPlayer = (player) => {
+    s.push();
+    s.setupLineStroke(player.rgb);
+    s.line(s.windowWidth - 200, player.startY, player.x, player.y);
+    s.pop();
+  };
 
-  drawCurrentSpeed() {
-    this.s.textSize(32);
-    this.s.text(`${this.currentSpeed} cps`, this.x + 55, this.y);
-  }
+  s.drawCurrentSpeed = (player) => {
+    s.textSize(32);
+    s.text(`${player.currentSpeed} cps`, player.x + 55, player.y);
+  };
+
+  return s;
 }

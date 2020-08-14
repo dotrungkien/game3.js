@@ -1,7 +1,7 @@
-import setupMasterBranch from './setup-master-branch';
-import setupTerminal from './setup-terminal';
-import setupCountdown from './setup-countdown';
-import setupPlayerOrigin from './setup-player-origin';
+import setupMasterBranch from "./setup-master-branch";
+import setupTerminal from "./setup-terminal";
+import setupCountdown from "./setup-countdown";
+import setupPlayer from "./setup-player";
 // import Player from './setup-player';
 
 export default function (s) {
@@ -21,7 +21,7 @@ export default function (s) {
 
     setupMasterBranch(s);
     setupCountdown(s);
-    setupPlayerOrigin(s);
+    setupPlayer(s);
   };
 
   window.onresize = () => {
@@ -30,7 +30,7 @@ export default function (s) {
 
   window.keyPressed = function (e) {
     e.preventDefault();
-    s.dispatch({ type: 'WRONG_LETTER', payload: false });
+    s.dispatch({ type: "WRONG_LETTER", payload: false });
   };
 
   s.draw = () => {
@@ -44,11 +44,14 @@ export default function (s) {
   s.drawPlayers = () => {
     const { currentIndex, players, clientId } = s.state;
 
-    players.forEach(playerInfo => {
+    players.forEach((playerInfo) => {
       // console.log(playerInfo);
       if (playerInfo.id === clientId) {
         if (playerInfo.currentIndex !== currentIndex) {
-          s.dispatch({ type: 'UPDATE_CURRENT_INDEX', payload: playerInfo.currentIndex });
+          s.dispatch({
+            type: "UPDATE_CURRENT_INDEX",
+            payload: playerInfo.currentIndex,
+          });
         }
       }
       s.drawPlayer(playerInfo);
