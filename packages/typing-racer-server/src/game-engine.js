@@ -4,7 +4,8 @@ const txtgen = require("txtgen");
 class GameEngine {
   constructor() {
     this.players = [];
-    this.sentence = txtgen.sentence();
+    // this.sentence = txtgen.sentence();
+    this.sentence = "dotrungkien";
 
     this.winner = undefined;
     this.endGameCountdown = undefined;
@@ -59,10 +60,10 @@ class GameEngine {
 
   restart() {
     console.log("restarting game now");
-    this.sentence = txtgen.sentence();
+    // this.sentence = txtgen.sentence();
+    this.sentence = "do trung kien";
     for (let i = 0; i < this.players.length; i++) {
       this.players[i].reset(this.sentence);
-      console.log(this.players[i].x, this.players[i].y);
     }
     delete this.winner;
     delete this.endGameCountdown;

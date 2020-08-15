@@ -2,6 +2,7 @@ class Player {
   constructor(id, sentence) {
     this.x = 400;
     this.startX = 200;
+    this.startY = 200;
     this.id = id;
     this.sentence = sentence;
     this.currentIndex = 0;

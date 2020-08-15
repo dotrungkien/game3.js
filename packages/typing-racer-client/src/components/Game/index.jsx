@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, Fragment } from "react";
 import * as Colyseus from "colyseus.js";
 import { generate } from "shortid";
 
@@ -20,6 +20,8 @@ import {
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
+import { getFileFromHash } from "../../helpers/database";
 
 const GameSketch = p5Wrapper(generate());
 
@@ -136,8 +138,32 @@ const Game = () => {
     setModal(false);
   };
 
+  const handleReplayClick = async (hash) => {
+    // start reading the file from DB
+    const replayFile = await getFileFromHash(hash);
+
+    const url = window.URL.createObjectURL(replayFile);
+
+    this.video = document.querySelector("video");
+    this.video.src = url;
+    this.video.play();
+
+    this.setState({
+      replayingVideo: true,
+    });
+  };
+
+  const renderReplayVideo = () => {
+    return (
+      <Fragment>
+        <video id="recorded" loop></video>
+      </Fragment>
+    );
+  };
+
   return (
     <div>
+      {renderReplayVideo()}
       <ToastContainer />
       {hasName ? (
         <GameSketch dispatch={dispatch} sketch={sketch} state={state} />
@@ -191,6 +217,16 @@ const Game = () => {
             </MDBBtn>
             <MDBBtn outline color="danger" onClick={() => setModal(false)}>
               No, thanks
+            </MDBBtn>
+
+            <MDBBtn
+              outline
+              color="primary"
+              onClick={() => {
+                setModal(false);
+              }}
+            >
+              Open Replay
             </MDBBtn>
           </MDBModalFooter>
         </MDBModal>
