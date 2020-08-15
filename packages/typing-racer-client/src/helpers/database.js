@@ -12,3 +12,16 @@ export async function getFileFromHash(hash) {
   const result = await dbManager.getFileFromHash(hash);
   return result;
 }
+export async function localSaveReplay(playerId, tournamentId, time, file) {
+  const result = await dbManager.localSaveReplay(
+    playerId,
+    tournamentId,
+    time,
+    file
+  );
+  return result;
+}
+export async function clientSaveTournamentReplay(file) {
+  const result = await dbManager.clientSaveTournamentReplay(file);
+  return result;
+}

@@ -21,7 +21,11 @@ import {
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { getFileFromHash } from "../../helpers/database";
+import {
+  localSaveReplay,
+  clientSaveTournamentReplay,
+  getFileFromHash,
+} from "../../helpers/database";
 
 const GameSketch = p5Wrapper(generate());
 
@@ -44,7 +48,7 @@ const Game = () => {
     if (!!localName) {
       console.log(`Welcome back ${localName}`);
       setMyName(localName);
-      toast.info(`Welcome ${myName}`);
+      toast.info(`👋 Nice to meet you ${myName}`);
     }
   }, [myName]);
 
@@ -97,6 +101,7 @@ const Game = () => {
 
       room.onMessage("restart", () => {
         console.log("restarting game-------------");
+        // stopRecording();
         resetPlayers(state, dispatch);
       });
 
@@ -161,9 +166,108 @@ const Game = () => {
     );
   };
 
+  const [mediaSource, setMediaSource] = useState(new window.MediaSource());
+  const [canvas, setCanvas] = useState(document.querySelector("canvas"));
+  const [video, setVideo] = useState(document.querySelector("video"));
+  const [stream, setStream] = useState(null);
+  const [recordedBlobs, setRecordedBlobs] = useState([]);
+  const [mediaRecorder, setMediaRecorder] = useState(null);
+
+  const startRecording = () => {
+    console.log("start recording");
+    let options = { mimeType: "video/webm" };
+    setRecordedBlobs([]);
+    try {
+      setMediaRecorder(new window.MediaRecorder(stream, options));
+    } catch (e0) {
+      console.log("Unable to create MediaRecorder with options Object: ", e0);
+      try {
+        options = { mimeType: "video/webm,codecs=vp9" };
+        setMediaRecorder(new window.MediaRecorder(stream, options));
+      } catch (e1) {
+        console.log("Unable to create MediaRecorder with options Object: ", e1);
+        try {
+          options = "video/vp8"; // Chrome 47
+          setMediaRecorder(new window.MediaRecorder(stream, options));
+        } catch (e2) {
+          alert(
+            "MediaRecorder is not supported by this browser.\n\n" +
+              "Try Firefox 29 or later, or Chrome 47 or later, " +
+              "with Enable experimental Web Platform features enabled from chrome://flags."
+          );
+          console.error("Exception while creating MediaRecorder:", e2);
+          return;
+        }
+      }
+    }
+    console.log(
+      "Created MediaRecorder",
+      mediaRecorder,
+      "with options",
+      options
+    );
+
+    mediaRecorder.onstop = (event) => {
+      // console.log('Recorder stopped: ', event);
+      // const superBuffer = new Blob(this.recordedBlobs, { type: 'video/webm' });
+      // this.video.src = window.URL.createObjectURL(superBuffer);
+    };
+
+    mediaRecorder.ondataavailable = (event) => {
+      if (event.data && event.data.size > 0) {
+        let newRecordedBlobs = recordedBlobs;
+        newRecordedBlobs.push(event.data);
+        setRecordedBlobs(newRecordedBlobs);
+      }
+    };
+
+    mediaRecorder.start(100); // collect 100ms of data
+    // console.log('MediaRecorder started', this.mediaRecorder);
+  };
+
+  const stopRecording = async () => {
+    mediaRecorder.stop();
+
+    // TODO: playerId = roomId? change to something more meaningful
+    const playerId = state.clientId;
+    const tournamentId = "demo";
+    // const time = gameManager.gameEndsAt - Date.now();
+    const time = Date.now();
+
+    console.log("Recorded Blobs: ", recordedBlobs);
+
+    const replayDate = new Date();
+    const filename =
+      "replay_" + playerId + "_" + replayDate.valueOf() + ".webm";
+    const options = { type: "video/webm" };
+
+    const file = new File(recordedBlobs, filename, options);
+
+    // this.video.controls = true;
+
+    // TODO: move to web worker so it doesn't pause main thread
+    if (tournamentId === "demo") {
+      localSaveReplay(playerId, tournamentId, time, file);
+    } else {
+      this.recordFileHash = await clientSaveTournamentReplay(file);
+      //const resultId = 1
+      //const result = await putTournamentResult(tournamentId, resultId, fileHash);
+      //console.log(result)
+    }
+  };
+
+  useEffect(() => {
+    if (canvas) {
+      setStream(canvas.captureStream()); // frames per second
+      console.log("Started stream capture from canvas element: ", stream);
+      startRecording();
+    }
+  }, [mediaSource, canvas, video, stream]);
+
+  const [isReplay, setIsReplay] = useState(false);
   return (
     <div>
-      {renderReplayVideo()}
+      {isReplay ? renderReplayVideo() : null}
       <ToastContainer />
       {hasName ? (
         <GameSketch dispatch={dispatch} sketch={sketch} state={state} />
