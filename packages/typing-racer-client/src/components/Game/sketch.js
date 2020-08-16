@@ -4,11 +4,12 @@ import setupCountdown from "./setup-countdown";
 import setupPlayer from "./setup-player";
 
 export default function (s) {
+  s.canvas = null;
   s.state = {};
   s.dispatch = () => {};
 
   s.setup = () => {
-    s.createCanvas(window.innerWidth, window.innerHeight);
+    s.canvas = s.createCanvas(window.innerWidth, window.innerHeight);
 
     //terminal
 

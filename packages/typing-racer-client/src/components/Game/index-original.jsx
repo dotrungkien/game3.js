@@ -1,4 +1,11 @@
-import React, { useContext, useState, useEffect, Fragment } from "react";
+import React, {
+  useRef,
+  useContext,
+  useState,
+  useEffect,
+  Fragment,
+} from "react";
+import p5 from "p5";
 import * as Colyseus from "colyseus.js";
 import { generate } from "shortid";
 
@@ -167,9 +174,8 @@ const Game = () => {
   };
 
   const [mediaSource, setMediaSource] = useState(new window.MediaSource());
-  const [canvas, setCanvas] = useState(document.querySelector("canvas"));
-
-  const [video, setVideo] = useState(document.querySelector("video"));
+  // const [canvas, setCanvas] = useState(null);
+  const [video, setVideo] = useState(null);
   const [stream, setStream] = useState(null);
   const [recordedBlobs, setRecordedBlobs] = useState([]);
   const [mediaRecorder, setMediaRecorder] = useState(null);
@@ -259,19 +265,33 @@ const Game = () => {
   };
 
   const [isReplay, setIsReplay] = useState(false);
+  const sketchContainer = useRef(null);
+  let p5Canvas = null;
 
   useEffect(() => {
-    let canvas2;
-    window.addEventListener("load", function () {
-      let queryCanvas = document.getElementsByTagName("canvas");
-      if (queryCanvas.item(0)) {
-        console.log(queryCanvas.item(0));
-        canvas2 = queryCanvas.item(0);
-        let stream2 = canvas2.captureStream(); // frames per second
+    p5Canvas = new p5(sketch, sketchContainer.current);
+    p5Canvas.state = state;
+    p5Canvas.dispath = dispatch;
+
+    const getCanvas = async () => {
+      let canvas = await document.getElementsByTagName("canvas");
+      return canvas;
+    };
+    getCanvas().then((canvas) => {
+      console.log(canvas);
+      console.log(canvas.length);
+      if (canvas.length) {
+        const canvas2 = canvas[0];
+        console.log(canvas2);
+        const stream2 = canvas2.captureStream(25); // frames per second
         console.log("Started stream capture from canvas element: ", stream2);
         // startRecording();
       }
     });
+
+    return () => {
+      p5Canvas.remove();
+    };
   }, []);
 
   return (
@@ -279,7 +299,8 @@ const Game = () => {
       {isReplay ? renderReplayVideo() : null}
       <ToastContainer />
       {hasName ? (
-        <GameSketch dispatch={dispatch} sketch={sketch} state={state} />
+        // <GameSketch dispatch={dispatch} sketch={sketch} state={state} />
+        <div id="main-game" ref={sketchContainer} />
       ) : (
         <MDBContainer>
           <MDBModal isOpen={!hasName} toggle={() => {}}>

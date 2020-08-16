@@ -22,7 +22,7 @@ export default function (id = generate()) {
       };
     }, [dispatch, sketch, state]);
 
-    return <div ref={sketchContainer} />;
+    return <div id="main-game" ref={sketchContainer} />;
   }
 
   P5Wrapper.propTypes = {
