@@ -10,6 +10,8 @@
 
 ## Live Demo (Ropsten Network)
 
+- This is old version without save name and game replay features, please run local version instead if you want to test those features.
+
 [typingracer.dotgrid.pro](http://typingracer.dotgrid.pro)
 
 ## 🚀 Getting Started
@@ -49,7 +51,7 @@ From inside project directory:
 
 ## Using the Saved Player Name
 
-- In [Game/index.jsx](packages/typing-racer-client/src/components/Game/index.jsx#L125-L133), a modal will be opened for player name input, then save in database.
+- In [Game/index.jsx](packages/typing-racer-client/src/components/Game/index.jsx#L125-L133), a modal will be opened for player name input, then save in local.
 
 ## Saving A Replay
 
