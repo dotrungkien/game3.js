@@ -278,7 +278,7 @@ const Game = () => {
         startRecording(stream);
       }
     });
-  });
+  }, []);
 
   return (
     <div>
