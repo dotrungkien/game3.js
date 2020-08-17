@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect, Fragment } from "react";
+
 import * as Colyseus from "colyseus.js";
 import { generate } from "shortid";
 
@@ -151,13 +152,9 @@ const Game = () => {
 
     const url = window.URL.createObjectURL(replayFile);
 
-    this.video = document.querySelector("video");
-    this.video.src = url;
-    this.video.play();
-
-    this.setState({
-      replayingVideo: true,
-    });
+    const video = document.querySelector("video");
+    video.src = url;
+    video.play();
   };
 
   const renderReplayVideo = () => {
@@ -168,15 +165,9 @@ const Game = () => {
     );
   };
 
-  const [mediaSource, setMediaSource] = useState(new window.MediaSource());
-
-  const [video, setVideo] = useState(document.querySelector("video"));
   const [recordedBlobs, setRecordedBlobs] = useState([]);
-  // const [mediaRecorder, setMediaRecorder] = useState(null);
   let mediaRecorder;
   let dbManager;
-
-  const [recordFileHash, setRecordFileHash] = useState(null);
 
   const startRecording = (stream) => {
     console.log("start recording");
@@ -252,17 +243,8 @@ const Game = () => {
 
     const file = new File(recordedBlobs, filename, options);
 
-    // this.video.controls = true;
-
-    // TODO: move to web worker so it doesn't pause main thread
-    if (tournamentId === "demo") {
-      localSaveReplay(playerId, tournamentId, time, file);
-    } else {
-      setRecordFileHash(await clientSaveTournamentReplay(file));
-      //const resultId = 1
-      //const result = await putTournamentResult(tournamentId, resultId, fileHash);
-      //console.log(result)
-    }
+    const fileHash = await clientSaveTournamentReplay(file);
+    handleReplayClick(fileHash);
   };
 
   const [isReplay, setIsReplay] = useState(false);

@@ -43,20 +43,20 @@ From inside project directory:
 
 ## 📼 Watching A Replay
 
-- Once a game session finishes, a replay is saved client-side via IPFS. To watch the video, press the `Open Replay` button
+- Once a game session finishes, a replay is saved client-side via IPFS. To watch the video, press the `Open Replay` button. A replay fragment will be inserted inside Navigation and Game Canvas, just wait a moment for replay became ready.
 
 ![](get-reward.png)
 
 ## Using the Saved Player Name
 
-- In [Game/index.jsx](packages/typing-racer-client/src/components/Game/index.jsx#L125-L133), a modal will be opened for player name input, then save in localStorage.
+- In [Game/index.jsx](packages/typing-racer-client/src/components/Game/index.jsx#L125-L133), a modal will be opened for player name input, then save in database.
 
 ## Saving A Replay
 
 - Game3.js uses the [MediaRecorder Web API](https://developer.mozilla.org/en-US/docs/Web/API/MediaRecorder) to save a replay of a game session on client-side IPFS.
-- A [canvas object](packages/typing-racer-client/src/components/Game/index.jsx#L269-L281) which shows the game client is saved by the API
-- Once a game starts [startRecording()](packages/typing-racer-client/src/components/Game/index.jsx#L179-L211) is called in Game/index.jsx
-- Once the game is finished [stopRecording()](packages/typing-racer-client/src/components/Game/index.jsx#L232-L265) is called, which saves the stream onto a webm file stored in IPFS (see localSaveReplay()).
+- A [canvas object](packages/typing-racer-client/src/components/Game/index.jsx#L252-L264) which shows the game client is saved by the API
+- Once a game starts [startRecording()](packages/typing-racer-client/src/components/Game/index.jsx#L172-L222) is called in Game/index.jsx
+- Once the game is finished [stopRecording()](packages/typing-racer-client/src/components/Game/index.jsx#L224-L248) is called, which saves the stream onto a webm file stored in IPFS (see localSaveReplay()).
 
 ## Licenses
 
