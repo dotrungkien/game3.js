@@ -22,6 +22,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import {
+  getLocalDatabaseManager,
   localSaveReplay,
   clientSaveTournamentReplay,
   getFileFromHash,
@@ -173,12 +174,12 @@ const Game = () => {
   const [recordedBlobs, setRecordedBlobs] = useState([]);
   // const [mediaRecorder, setMediaRecorder] = useState(null);
   let mediaRecorder;
+  let dbManager;
 
   const [recordFileHash, setRecordFileHash] = useState(null);
 
   const startRecording = (stream) => {
     console.log("start recording");
-    let mediaRecorder;
     let options = { mimeType: "video/webm" };
     try {
       mediaRecorder = new window.MediaRecorder(stream, options);
@@ -224,8 +225,8 @@ const Game = () => {
       }
     };
 
-    // mediaRecorder.start(100); // collect 100ms of data
-    // console.log('MediaRecorder started', this.mediaRecorder);
+    mediaRecorder.start(100); // collect 100ms of data
+    console.log("MediaRecorder started", mediaRecorder);
     // setMediaRecorder(mediaRecorder);
   };
 
@@ -267,11 +268,11 @@ const Game = () => {
   const [isReplay, setIsReplay] = useState(false);
 
   useEffect(() => {
+    dbManager = getLocalDatabaseManager();
     let canvas;
     window.addEventListener("load", function () {
       let queryCanvas = document.getElementsByTagName("canvas");
       if (queryCanvas.item(0)) {
-        console.log(queryCanvas.item(0));
         canvas = queryCanvas.item(0);
         let stream = canvas.captureStream(); // frames per second
         console.log("Started stream capture from canvas element: ", stream);
@@ -297,6 +298,7 @@ const Game = () => {
                   type="text"
                   onInput={(e) => handleInput(e)}
                   value={myName}
+                  onSubmit={() => saveName()}
                   label="Your name here"
                   outline
                 />
@@ -343,6 +345,7 @@ const Game = () => {
               color="primary"
               onClick={() => {
                 setIsReplay(true);
+                setModal(false);
               }}
             >
               Open Replay
