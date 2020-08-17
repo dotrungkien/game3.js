@@ -103,6 +103,7 @@ const Game = () => {
         console.log("restarting game-------------");
         // stopRecording();
         resetPlayers(state, dispatch);
+        stopRecording();
       });
 
       room.onMessage("claimSuccess", ({ clientId, tx, address }) => {
@@ -167,30 +168,30 @@ const Game = () => {
   };
 
   const [mediaSource, setMediaSource] = useState(new window.MediaSource());
-  const [canvas, setCanvas] = useState(document.querySelector("canvas"));
 
   const [video, setVideo] = useState(document.querySelector("video"));
-  const [stream, setStream] = useState(null);
   const [recordedBlobs, setRecordedBlobs] = useState([]);
-  const [mediaRecorder, setMediaRecorder] = useState(null);
+  // const [mediaRecorder, setMediaRecorder] = useState(null);
+  let mediaRecorder;
+
   const [recordFileHash, setRecordFileHash] = useState(null);
 
-  const startRecording = () => {
+  const startRecording = (stream) => {
     console.log("start recording");
+    let mediaRecorder;
     let options = { mimeType: "video/webm" };
-    setRecordedBlobs([]);
     try {
-      setMediaRecorder(new window.MediaRecorder(stream, options));
+      mediaRecorder = new window.MediaRecorder(stream, options);
     } catch (e0) {
       console.log("Unable to create MediaRecorder with options Object: ", e0);
       try {
         options = { mimeType: "video/webm,codecs=vp9" };
-        setMediaRecorder(new window.MediaRecorder(stream, options));
+        mediaRecorder = new window.MediaRecorder(stream, options);
       } catch (e1) {
         console.log("Unable to create MediaRecorder with options Object: ", e1);
         try {
           options = "video/vp8"; // Chrome 47
-          setMediaRecorder(new window.MediaRecorder(stream, options));
+          mediaRecorder = new window.MediaRecorder(stream, options);
         } catch (e2) {
           alert(
             "MediaRecorder is not supported by this browser.\n\n" +
@@ -223,11 +224,16 @@ const Game = () => {
       }
     };
 
-    mediaRecorder.start(100); // collect 100ms of data
+    // mediaRecorder.start(100); // collect 100ms of data
     // console.log('MediaRecorder started', this.mediaRecorder);
+    // setMediaRecorder(mediaRecorder);
   };
 
   const stopRecording = async () => {
+    console.log("stop recording");
+    setIsReplay(true);
+    console.log(mediaRecorder);
+    if (!mediaRecorder) return;
     mediaRecorder.stop();
 
     // TODO: playerId = roomId? change to something more meaningful
@@ -251,7 +257,7 @@ const Game = () => {
     if (tournamentId === "demo") {
       localSaveReplay(playerId, tournamentId, time, file);
     } else {
-      recordFileHash = await clientSaveTournamentReplay(file);
+      setRecordFileHash(await clientSaveTournamentReplay(file));
       //const resultId = 1
       //const result = await putTournamentResult(tournamentId, resultId, fileHash);
       //console.log(result)
@@ -261,18 +267,18 @@ const Game = () => {
   const [isReplay, setIsReplay] = useState(false);
 
   useEffect(() => {
-    let canvas2;
+    let canvas;
     window.addEventListener("load", function () {
       let queryCanvas = document.getElementsByTagName("canvas");
       if (queryCanvas.item(0)) {
         console.log(queryCanvas.item(0));
-        canvas2 = queryCanvas.item(0);
-        let stream2 = canvas2.captureStream(); // frames per second
-        console.log("Started stream capture from canvas element: ", stream2);
-        // startRecording();
+        canvas = queryCanvas.item(0);
+        let stream = canvas.captureStream(); // frames per second
+        console.log("Started stream capture from canvas element: ", stream);
+        startRecording(stream);
       }
     });
-  }, []);
+  });
 
   return (
     <div>
@@ -336,7 +342,7 @@ const Game = () => {
               outline
               color="primary"
               onClick={() => {
-                setModal(false);
+                setIsReplay(true);
               }}
             >
               Open Replay
